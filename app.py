@@ -1,5 +1,5 @@
 from flask import Flask, request
-from services import admin
+from services import admin, session
 
 app = Flask(__name__)
 
@@ -16,7 +16,9 @@ def index():
 def admin_login():
     username = request.json["username"]
     password = request.json["password"]
-    if admin.is_valid_user(username, password):
+    res = admin.is_valid_user(username, password)
+    if res:
+        session.create_admin_session(res)
         return "Success"
     return "Failed"
 
