@@ -12,7 +12,7 @@ def index():
 
 # Admin password - cb!NmgQ07eX5
 ''' To authenticate admin user '''
-@app.route('/admin/login')
+@app.route('/admin/login', methods=["POST"])
 def admin_login():
     username = request.json["username"]
     password = request.json["password"]

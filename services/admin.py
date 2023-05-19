@@ -8,6 +8,8 @@ def is_valid_user(username, password):
         validation.is_valid_password(password) ):
         db = DB()
         lst = db.get_admin_password(username)
+        if ( not lst ):
+            return 0
         user_id = lst[0]
         hashed_pw = lst[1]
         if ( hashed_pw and bcrypt.checkpw(bytes(password, 'utf-8'), bytes(hashed_pw, 'utf-8')) ):
