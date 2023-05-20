@@ -1,6 +1,7 @@
 import os
 import hashlib
 import datetime
+from services.user.db import UserDB
 from services.admin.db import AdminDB
 
 
@@ -17,9 +18,18 @@ def get_expires_at():
     return str(format(datetime.datetime.now() + datetime.timedelta(days=1), '%Y-%m-%d %H:%M:%S') )
 
 
-''' Insert the session information into table '''
+''' Insert the admin session information into table '''
 def create_admin_session(user_id):
     db = AdminDB()
+    db.delete_session(user_id)
+    session_id = generate_session_key().hexdigest()
+    expires_at = get_expires_at()
+    return db.create_session(user_id, session_id, expires_at)
+
+
+''' Insert the user session information into table '''
+def create_user_session(user_id):
+    db = UserDB()
     db.delete_session(user_id)
     session_id = generate_session_key().hexdigest()
     expires_at = get_expires_at()

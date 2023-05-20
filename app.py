@@ -31,32 +31,29 @@ def admin_login():
 ''' To create a new flight '''
 @app.route('/flight', methods=["POST"])
 def create_flight():
-    if ( admin.validate_session(request.headers.get("id")) ):
-        payload = request.json
-        return flight.create_flight(payload["flight_no"], payload["airline"],
-                                    payload["source"], payload["destination"])
-    return "Forbidden", 403
+    resp = service.create_flight(request.headers.get("id"),
+                                request.json.get("flight_no"),
+                                request.json.get("airline"), 
+                                request.json.get("source"),
+                                request.json.get("destination"))
+    return get_response(resp)
 
 
 ''' To add flight timing for already created flight '''
 @app.route('/flight-timing', methods=["POST"])
 def create_flight_timing():
-    if ( admin.validate_session(request.headers.get("id")) ):
-        payload = request.json
-        return flight.create_flight_timing(payload["flight_no"], payload["date"],
-                                            payload["time"])
-    return "Forbidden", 403
+    resp = service.create_flight_timing(request.headers.get("id"),
+                                        request.json.get("flight_no"),
+                                        request.json.get("date"), 
+                                        request.json.get("time"))
+    return get_response(resp)
 
 
 ''' To remove a flight '''
 @app.route('/flight', methods=["DELETE"])
 def remove_flight():
-    resp = service.remove_flight(request.headers.get("id"), request.json["flight_no"])
-    match resp:
-        case 1: return ("Success", 200)
-        case 2: return ("Bad request", 400)
-        case 3: return ("Database error", 500)
-        case 4: return ("Forbidden", 403)
+    resp = service.remove_flight(request.headers.get("id"), request.json.get("flight_no"))
+    return get_response(resp)
 
 
 ''' To remove a flight timing '''
@@ -65,11 +62,37 @@ def remove_flight_timing():
     resp = service.remove_flight_timing(request.headers.get('id'),
                                         request.json.get('flight_no'), request.json.get('date'), 
                                         request.json.get('time'))
+    return get_response(resp)
+
+
+''' To create a new user '''
+@app.route('/signup', methods=["POST"])
+def create_user():
+    resp = service.create_user(request.json)
+    return get_response(resp)
+
+
+''' To authenticate a user '''
+@app.route('/login', methods=["POST"])
+def login_user():
+    resp = service.authenticate_user(request.json)
+    return get_response(resp)
+
+
+''' To get available flights based on date and time '''
+@app.route('/flight', methods=["GET"])
+def get_flights():
+    resp = service.get_flights(request.headers.get('id'), request.json)
+    return get_response(resp)
+
+
+def get_response(resp):
     match resp:
         case 1: return ("Success", 200)
         case 2: return ("Bad request", 400)
         case 3: return ("Database error", 500)
         case 4: return ("Forbidden", 403)
+        case _: return resp
 
 
 app.run(debug=True)

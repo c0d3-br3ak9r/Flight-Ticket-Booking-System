@@ -37,26 +37,34 @@ class FlightDB:
             self.conn = None
 
 
-    def getall(self):
-        query = "SELECT * FROM `flights`"
+    ''' Get all upcoming flights '''
+    def get_all_flights(self):
+        query = ''' SELECT `flights`.`flight_no`, `airline`, `source`, `destination`, `date`, `time`
+                    FROM `flights` INNER JOIN `flight_timings`
+                    ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
+                    WHERE DATE(`date`) >= DATE('now')'''
         self.__exec(query)
-        res = self.cursor.fetchall()
-        for i in res:
-            print(i)
-
-    
-    ''' Checks whether there already exists a session with same key '''
-    def session_exists(self, session_key):
-        query = "SELECT `user_id`, `expires_at` FROM `admin_session` WHERE `session_key`=?"
-        self.__exec(query, [session_key])
-        res = self.cursor.fetchone()
-        return res if res else None
+        return self.cursor.fetchall()
     
 
-    ''' Delete session key if the user already has session '''
-    def delete_session(self, user_id):
-        query = "DELETE FROM `admin_session` WHERE `admin_id`=?"
-        self.__exec(query, [user_id])
+    ''' Get flights based on date '''
+    def get_flights_date(self, date):
+        query = ''' SELECT `flights`.`flight_no`, `airline`, `source`, `destination`, `date`, `time`
+                    FROM `flights` INNER JOIN `flight_timings`
+                    ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
+                    WHERE DATE(`date`) = DATE(?)'''
+        self.__exec(query, [date])
+        return self.cursor.fetchall()
+    
+
+    ''' Get flights based on date and time '''
+    def get_flights_date_time(self, date, time):
+        query = ''' SELECT `flights`.`flight_no`, `airline`, `source`, `destination`, `date`, `time`
+                    FROM `flights` INNER JOIN `flight_timings`
+                    ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
+                    WHERE DATE(`date`) = DATE(?) AND strftime('%H', `time`) >= ? '''
+        self.__exec(query, [date, time])
+        return self.cursor.fetchall()
 
 
     ''' Creates a new flight '''
