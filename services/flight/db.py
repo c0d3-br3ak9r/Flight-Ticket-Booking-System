@@ -71,6 +71,12 @@ class FlightDB:
         query = '''INSERT INTO `flight_timings` (`flight_no`, `date`, `time`) VALUES
                     (?, ?, ?)'''
         return self.__exec(query, [flight_no, date, time])
+    
+
+    ''' Delete existing flight '''
+    def delete_flight(self, flight_no):
+        query = "DELETE FROM `flights` WHERE `flight_no`=?"
+        return self.__exec(query, [flight_no])
         
     
     ''' Executes the SQL query '''

@@ -21,3 +21,10 @@ def create_flight_timing(flight_no, date, timing):
             return ("Success", 201)
         return ("Database erorr", 500)
     return ('Bad Request', 400)
+
+
+def remove_flight(flight_no):
+    db = FlightDB()
+    if ( db.delete_flight(flight_no) ):
+        return 1
+    return 3

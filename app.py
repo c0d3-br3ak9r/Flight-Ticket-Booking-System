@@ -1,5 +1,5 @@
 from flask import Flask, request
-from services import session
+from services import session, service
 from services.admin import admin
 from services.flight import flight
 
@@ -48,4 +48,13 @@ def create_flight_timing():
     return "Forbidden", 403
 
 
+''' To remove a flight timing '''
+@app.route('/flight', methods=["DELETE"])
+def remove_flight():
+    resp = service.remove_flight(request.headers.get("id"), request.json["flight_no"])
+    match resp:
+        case 1: return ("Success", 200)
+        case 2: return ("Bad request", 400)
+        case 3: return ("Database error", 500)
+        case 4: return ("Forbidden", 403)
 app.run(debug=True)
