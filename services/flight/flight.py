@@ -28,3 +28,17 @@ def remove_flight(flight_no):
     if ( db.delete_flight(flight_no) ):
         return 1
     return 3
+
+def remove_flight_timing(flight_no, date, time):
+    db = FlightDB()
+    if ( flight_no and date and time ):
+        res = db.delete_flight_timing_from_flight_date_time(flight_no, date, time)
+    elif ( flight_no and date ):
+        res = db.delete_flight_timing_from_flight_date(flight_no, date)
+    elif ( flight_no ):
+        res = db.delete_flight_timing_from_flight(flight_no)
+    elif ( date ):
+        res = db.delete_flight_timing_from_date(date)
+    if ( res ):
+        return 1
+    return 3

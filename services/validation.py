@@ -22,7 +22,7 @@ def is_valid_date(date_val):
         try:
             dt = datetime.strptime(date_val, "%Y-%m-%d")
             curr = datetime.now()
-            if ( date(curr.year-1, curr.month, curr.day) < dt.date() < date(curr.year+1, curr.month, curr.day) ):
+            if ( date(curr.year, curr.month, curr.day) < dt.date() < date(curr.year+1, curr.month, curr.day) ):
                 return True
             return False
         except ValueError:

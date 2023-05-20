@@ -77,7 +77,33 @@ class FlightDB:
     def delete_flight(self, flight_no):
         query = "DELETE FROM `flights` WHERE `flight_no`=?"
         return self.__exec(query, [flight_no])
-        
+    
+
+    ''' Delete all flight timings of particular flight '''
+    def delete_flight_timing_from_flight(self, flight_no):
+        query = "DELETE FROM `flight_timings` WHERE `flight_no`=?"
+        return self.__exec(query, [flight_no])
+    
+
+    ''' Delete all flight timings at given date'''
+    def delete_flight_timing_from_date(self, date):
+        query = "DELETE FROM `flight_timings` WHERE `date`=?"
+        return self.__exec(query, [date])
+    
+
+    ''' Delete all flight timings of particular flight at given date '''
+    def delete_flight_timing_from_flight_date(self, flight_no, date):
+        query = '''DELETE FROM `flight_timings` WHERE
+                `flight_no`=? AND `date`=?'''
+        return self.__exec(query, [flight_no, date])
+
+
+    ''' Delete all flight timings of particular flight at given date on given time'''
+    def delete_flight_timing_from_flight_date_time(self, flight_no, date, time):
+        query = '''DELETE FROM `flight_timings` WHERE 
+                `flight_no`=? AND `date`=? AND `time`=?'''
+        return self.__exec(query, [flight_no, date, time])
+    
     
     ''' Executes the SQL query '''
     def __exec(self, query, params=[]):

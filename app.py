@@ -48,7 +48,7 @@ def create_flight_timing():
     return "Forbidden", 403
 
 
-''' To remove a flight timing '''
+''' To remove a flight '''
 @app.route('/flight', methods=["DELETE"])
 def remove_flight():
     resp = service.remove_flight(request.headers.get("id"), request.json["flight_no"])
@@ -57,4 +57,19 @@ def remove_flight():
         case 2: return ("Bad request", 400)
         case 3: return ("Database error", 500)
         case 4: return ("Forbidden", 403)
+
+
+''' To remove a flight timing '''
+@app.route('/flight-timing', methods=["DELETE"])
+def remove_flight_timing():
+    resp = service.remove_flight_timing(request.headers.get('id'),
+                                        request.json.get('flight_no'), request.json.get('date'), 
+                                        request.json.get('time'))
+    match resp:
+        case 1: return ("Success", 200)
+        case 2: return ("Bad request", 400)
+        case 3: return ("Database error", 500)
+        case 4: return ("Forbidden", 403)
+
+
 app.run(debug=True)
