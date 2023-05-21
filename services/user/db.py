@@ -18,7 +18,7 @@ class UserDB:
                                     `session_key` TEXT NOT NULL UNIQUE,
                                     `expires_at` DATETIME NOT NULL,
                                     CONSTRAINT `sess_user_id_fk` 
-                                    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+                                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
                                 )
                                 '''
     
@@ -59,18 +59,18 @@ class UserDB:
         return res if res else None
     
 
-    ''' Checks whether there already exists a session with same key '''
-    def session_exists(self, session_key):
-        query = "SELECT `expires_at` FROM `user_session` WHERE `session_key`=?"
+    ''' Get user id and expires at if there already exists a session with same key '''
+    def get_user_id_expires(self, session_key):
+        query = "SELECT `user_id`, `expires_at` FROM `user_session` WHERE `session_key`=?"
         self.__exec(query, [session_key])
         res = self.cursor.fetchone()
         return res
     
 
     ''' Delete session key if the user already has session '''
-    def delete_session(self, user_id):
-        query = "DELETE FROM `user_session` WHERE `user_id`=?"
-        self.__exec(query, [user_id])
+    def delete_session(self, session_id):
+        query = "DELETE FROM `user_session` WHERE `session_key`=?"
+        return self.__exec(query, [session_id])
 
 
     ''' Creates a new user session with session key and expires at as 24hr interval '''

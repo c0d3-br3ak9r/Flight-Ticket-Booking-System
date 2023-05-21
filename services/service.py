@@ -2,6 +2,7 @@ from services import session, validation
 from services.admin import admin
 from services.user import user
 from services.flight import flight
+from services.booking import booking
 
 
 ''' To create a new user '''
@@ -28,13 +29,46 @@ def get_flights(session_id, payload):
     return 4
 
 
+''' To book flight ticket '''
+def book_flight(session_id, payload):
+    if ( user.validate_session(session_id) ):
+        flight = payload.get("flight_no")
+        date = payload.get("date")
+        time = payload.get("time")
+        seat_no = payload.get("seat_no")
+        if ( str.isalnum(flight) and validation.is_valid_date(date)
+            and validation.is_valid_time(time) 
+            and ( not seat_no or ( 1 <= seat_no <= 60 ) ) ):
+            return booking.book_flight(session_id, flight, date, time, seat_no)
+        return 2
+    return 4
+
+
+''' To get all bookings made by the user '''
+def get_bookings(session_id):
+    if ( user.validate_session(session_id) ):
+        resp = booking.get_bookings(session_id)
+        return {
+            "count" : len(resp),
+            "flights" : resp
+        }
+    return 4
+
+
 ''' To authenticate user '''
 def authenticate_user(payload):
     username = payload.get("username")
-    password = payload.get("password")
+    password = payload.get("password")    
     if ( validation.is_valid_username(username) and validation.is_valid_password(password) ):
         return user.login_user(username, password)
     return 2
+
+
+''' To logout user '''
+def logout_user(session_id):
+    if ( user.validate_session(session_id) ):
+        return user.logout_user(session_id)
+    return 4
 
 
 ''' To create a flight '''

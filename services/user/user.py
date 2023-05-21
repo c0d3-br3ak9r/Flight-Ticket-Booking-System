@@ -29,11 +29,17 @@ def login_user(username, password):
     return 2
 
 
+''' Logout the user '''
+def logout_user(session_id):
+    db = UserDB()
+    return db.delete_session(session_id)
+
+
 ''' Validates the user session '''
 def validate_session(session_id):
     db = UserDB()
-    expires_at = db.session_exists(session_id)
-    if ( expires_at and datetime.datetime.strptime(expires_at[0], '%Y-%m-%d %H:%M:%S') > datetime.datetime.now() ):
+    expires_at = db.get_user_id_expires(session_id)
+    if ( expires_at and datetime.datetime.strptime(expires_at[1], '%Y-%m-%d %H:%M:%S') > datetime.datetime.now() ):
         return True
     return False
 
@@ -49,4 +55,6 @@ def get_flights_data(date, time):
         res = db.get_flights_date(date)
     else:
         res = db.get_all_flights()
-    return [ dict(zip(fields, list(x))) for x in res ]
+    if res:
+        return [ dict(zip(fields, list(x))) for x in res ]
+    return 3

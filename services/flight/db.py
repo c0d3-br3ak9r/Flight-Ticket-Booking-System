@@ -43,8 +43,9 @@ class FlightDB:
                     FROM `flights` INNER JOIN `flight_timings`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE DATE(`date`) >= DATE('now')'''
-        self.__exec(query)
-        return self.cursor.fetchall()
+        if ( self.__exec(query) ):
+            return self.cursor.fetchall()
+        return -1
     
 
     ''' Get flights based on date '''
@@ -53,8 +54,9 @@ class FlightDB:
                     FROM `flights` INNER JOIN `flight_timings`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE DATE(`date`) = DATE(?)'''
-        self.__exec(query, [date])
-        return self.cursor.fetchall()
+        if ( self.__exec(query, [date]) ):
+            return self.cursor.fetchall()
+        return -1
     
 
     ''' Get flights based on date and time '''
@@ -63,8 +65,18 @@ class FlightDB:
                     FROM `flights` INNER JOIN `flight_timings`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE DATE(`date`) = DATE(?) AND strftime('%H', `time`) >= ? '''
-        self.__exec(query, [date, time])
-        return self.cursor.fetchall()
+        if ( self.__exec(query, [date, time]) ):
+            return self.cursor.fetchall()
+        return -1
+    
+
+    ''' Get flight timing id '''
+    def get_flight_timing_id(self, flight_no, date, time):
+        query = ''' SELECT `id` FROM `flight_timings` WHERE
+                    `flight_no`=? AND `date`=? AND `time`=? '''
+        if ( self.__exec(query, [flight_no, date, time]) ):
+            return self.cursor.fetchone()
+        return -1
 
 
     ''' Creates a new flight '''

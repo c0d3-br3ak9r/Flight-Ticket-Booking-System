@@ -65,6 +65,15 @@ def remove_flight_timing():
     return get_response(resp)
 
 
+''' To get all bookings '''
+@app.route('/bookings', methods=["GET"])
+def get_all_bookings():
+    resp = service.get_all_bookings(request.headers.get('id'),
+                                    request.json.get('flight_no'), request.json.get('date'), 
+                                    request.json.get('time'))
+    return get_response(resp)
+
+
 ''' To create a new user '''
 @app.route('/signup', methods=["POST"])
 def create_user():
@@ -83,6 +92,27 @@ def login_user():
 @app.route('/flight', methods=["GET"])
 def get_flights():
     resp = service.get_flights(request.headers.get('id'), request.json)
+    return get_response(resp)
+
+
+''' To book flight ticket '''
+@app.route('/book-ticket', methods=["POST"])
+def book_ticket():
+    resp = service.book_flight(request.headers.get('id'), request.json)
+    return get_response(resp)
+
+
+''' To get all bookings made by user '''
+@app.route('/my-bookings', methods=["GET"])
+def get_bookings():
+    resp = service.get_bookings(request.headers.get('id'))
+    return get_response(resp)
+
+
+''' To logout user '''
+@app.route('/logout', methods=["POST"])
+def logout_user():
+    resp = service.logout_user(request.headers.get('id'))
     return get_response(resp)
 
 
