@@ -170,3 +170,9 @@
       ```
       POST /logout
       ```
+      
+### HTTP Status Codes Used
+   1. 200 - denotes succcessful request.
+   2. 400 - denotes invalid input. If you get this, verify whether the passed json is in the correct format.
+   3. 500 - Internal error such as in database. Usually occurs if you try to violate constraints such as creating multiple users with same username.
+   4. 403 - Not authorized. If you get this, check whether you are authenticated and you are passing session id as said above.
