@@ -16,12 +16,14 @@ def create_user(payload):
 
 ''' To get flight details '''
 def get_flights(session_id, payload):
-    if ( user.validate_session(session_id) ):
+    if ( session_id and user.validate_session(session_id) ):
         date = payload.get('date')
         time = payload.get('time')
+        flight = payload.get('flight')
+        flight = flight if flight and str.isalnum(flight) else None
         date = date if validation.is_valid_date(date) else None
         time = time if validation.is_valid_time(time) else None
-        resp = user.get_flights_data(date, time)
+        resp = user.get_flights_data(flight, date, time)
         return {
             "count" : len(resp),
             "flights" : resp
@@ -31,7 +33,7 @@ def get_flights(session_id, payload):
 
 ''' To book flight ticket '''
 def book_flight(session_id, payload):
-    if ( user.validate_session(session_id) ):
+    if ( session_id and user.validate_session(session_id) ):
         flight = payload.get("flight_no")
         date = payload.get("date")
         time = payload.get("time")
@@ -46,7 +48,7 @@ def book_flight(session_id, payload):
 
 ''' To get all bookings made by the user '''
 def get_bookings(session_id):
-    if ( user.validate_session(session_id) ):
+    if ( session_id and user.validate_session(session_id) ):
         resp = booking.get_bookings(session_id)
         return {
             "count" : len(resp),
@@ -66,14 +68,14 @@ def authenticate_user(payload):
 
 ''' To logout user '''
 def logout_user(session_id):
-    if ( user.validate_session(session_id) ):
+    if ( session_id and user.validate_session(session_id) ):
         return user.logout_user(session_id)
     return 4
 
 
 ''' To create a flight '''
 def create_flight(session_id, flight_no, airline, source, destination):
-    if ( admin.validate_session(session_id) ):
+    if ( session_id and admin.validate_session(session_id) ):
         if ( str.isalnum(flight_no) and validation.strings_and_spaces(airline) and
             validation.strings_and_spaces(source) and validation.strings_and_spaces(destination) ):
             return flight.create_flight(flight_no, airline, source, destination)
@@ -82,7 +84,7 @@ def create_flight(session_id, flight_no, airline, source, destination):
 
 ''' To create a flight timing '''
 def create_flight_timing(session_id, flight_no, date, time):
-    if ( admin.validate_session(session_id) ):
+    if ( session_id and admin.validate_session(session_id) ):
         if ( str.isalnum(flight_no) and validation.is_valid_date(date) and
             validation.is_valid_time(time) ):
             return flight.create_flight_timing(flight_no, date, time)
@@ -106,4 +108,21 @@ def remove_flight_timing(session_id, flight_no, date, time):
                 ( date and validation.is_valid_date(date) ) or 
                 ( time and validation.is_valid_time(time) ) ):
             return flight.remove_flight_timing(flight_no, date, time)
+    return 4
+
+
+''' To get all bookings '''
+def get_all_bookings(session_id, payload):
+    if ( session_id and admin.validate_session(session_id) ):
+        flight = payload.get("flight_no")
+        date = payload.get("date")
+        time = payload.get("time")
+        flight = flight if str.isalnum(flight) else None
+        date = date if validation.is_valid_date(date) else None
+        time = time if validation.is_valid_time(time) else None
+        resp = admin.get_bookings(flight, date, time)
+        return {
+            "count" : len(resp),
+            "flights" : resp
+        }
     return 4

@@ -37,55 +37,92 @@ class BookingDB:
                     FROM `users` INNER JOIN `bookings`
                     ON `bookings`.`user_id` = `users`.`id`
                     INNER JOIN `flight_timings` 
-                    ON `bookings`.`id` = `flight_timings`.`id`
+                    ON `bookings`.`flight_timing_id` = `flight_timings`.`id`
                     INNER JOIN `flights`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` '''
-        self.__exec(query)
-        return self.cursor.fetchall()
+        if ( self.__exec(query) ):
+            return self.cursor.fetchall()
+        return -1
     
     ''' Get all bookings of a particular user '''
-    def get_all_bookings_user(self, user_id):
+    def get_all_bookings_from_user(self, user_id):
         query = '''SELECT `bookings`.`id`, `username`, `flights`.`flight_no`, `source`,
                          `destination`, `airline`, `date`, `time`, `seat_no` 
                     FROM `users` INNER JOIN `bookings`
                     ON `bookings`.`user_id` = `users`.`id`
                     INNER JOIN `flight_timings` 
-                    ON `bookings`.`id` = `flight_timings`.`id`
+                    ON `bookings`.`flight_timing_id` = `flight_timings`.`id`
                     INNER JOIN `flights`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE `users`.`id` = ? '''
-        self.__exec(query, [user_id])
-        return self.cursor.fetchall()
+        if ( self.__exec(query, [user_id]) ):
+            return self.cursor.fetchall()
+        return -1
     
 
     ''' Get all bookings of a particular flight '''
-    def get_all_bookings_flight(self, flight):
+    def get_all_bookings_from_flight(self, flight):
         query = '''SELECT `bookings`.`id`, `username`, `flights`.`flight_no`, `source`,
                          `destination`, `airline`, `date`, `time`, `seat_no` 
                     FROM `users` INNER JOIN `bookings`
                     ON `bookings`.`user_id` = `users`.`id`
                     INNER JOIN `flight_timings` 
-                    ON `bookings`.`id` = `flight_timings`.`id`
+                    ON `bookings`.`flight_timing_id` = `flight_timings`.`id`
                     INNER JOIN `flights`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE `flights`.`flight_no` = ? '''
-        self.__exec(query, [flight])
-        return self.cursor.fetchall()
+        if ( self.__exec(query, [flight]) ):
+            return self.cursor.fetchall()
+        return -1
+    
 
-
-    ''' Get all bookings of a particular flight on given time '''
-    def get_all_bookings_flight_time(self, flight, time):
+    ''' Get all bookings at given date '''
+    def get_all_bookings_from_flight_date(self, date):
         query = '''SELECT `bookings`.`id`, `username`, `flights`.`flight_no`, `source`,
                          `destination`, `airline`, `date`, `time`, `seat_no` 
                     FROM `users` INNER JOIN `bookings`
                     ON `bookings`.`user_id` = `users`.`id`
                     INNER JOIN `flight_timings` 
-                    ON `bookings`.`id` = `flight_timings`.`id`
+                    ON `bookings`.`flight_timing_id` = `flight_timings`.`id`
                     INNER JOIN `flights`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
-                    WHERE `flights`.`flight_no` = ? AND `flight_timings`.`time` = ? '''
-        self.__exec(query, [flight, time])
-        return self.cursor.fetchall()
+                    WHERE `flight_timings`.`date` = ?'''
+        if ( self.__exec(query, [date]) ):
+            return self.cursor.fetchall()
+        return -1
+    
+
+    ''' Get all bookings of a particular flight at given date '''
+    def get_all_bookings_from_flight_date(self, flight, date):
+        query = '''SELECT `bookings`.`id`, `username`, `flights`.`flight_no`, `source`,
+                         `destination`, `airline`, `date`, `time`, `seat_no` 
+                    FROM `users` INNER JOIN `bookings`
+                    ON `bookings`.`user_id` = `users`.`id`
+                    INNER JOIN `flight_timings` 
+                    ON `bookings`.`flight_timing_id` = `flight_timings`.`id`
+                    INNER JOIN `flights`
+                    ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
+                    WHERE `flights`.`flight_no` = ? AND `flight_timings`.`date` = ?'''
+        if ( self.__exec(query, [flight, date]) ):
+            return self.cursor.fetchall()
+        return -1
+
+
+    ''' Get all bookings of a particular flight at given date and time '''
+    def get_all_bookings_from_flight_date_time(self, flight, date, time):
+        query = '''SELECT `bookings`.`id`, `username`, `flights`.`flight_no`, `source`,
+                         `destination`, `airline`, `date`, `time`, `seat_no` 
+                    FROM `users` INNER JOIN `bookings`
+                    ON `bookings`.`user_id` = `users`.`id`
+                    INNER JOIN `flight_timings` 
+                    ON `bookings`.`flight_timing_id` = `flight_timings`.`id`
+                    INNER JOIN `flights`
+                    ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
+                    WHERE `flights`.`flight_no` = ? AND `flight_timings`.`time` = ? 
+                    AND `flight_timings`.`date` = ?'''
+        if ( self.__exec(query, [flight, time, date]) ):
+            return self.cursor.fetchall()
+        return -1
 
 
     ''' Create a new booking '''

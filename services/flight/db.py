@@ -48,8 +48,19 @@ class FlightDB:
         return -1
     
 
+    ''' Get flights based on flight '''
+    def get_flights_from_flight(self, flight):
+        query = ''' SELECT `flights`.`flight_no`, `airline`, `source`, `destination`, `date`, `time`
+                    FROM `flights` INNER JOIN `flight_timings`
+                    ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
+                    WHERE `flights`.`flight_no` = ?'''
+        if ( self.__exec(query, [flight]) ):
+            return self.cursor.fetchall()
+        return -1
+    
+
     ''' Get flights based on date '''
-    def get_flights_date(self, date):
+    def get_flights_from_date(self, date):
         query = ''' SELECT `flights`.`flight_no`, `airline`, `source`, `destination`, `date`, `time`
                     FROM `flights` INNER JOIN `flight_timings`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
@@ -59,13 +70,36 @@ class FlightDB:
         return -1
     
 
+    ''' Get flights based on date of particular flight '''
+    def get_flights_from_flight_date(self, flight, date):
+        query = ''' SELECT `flights`.`flight_no`, `airline`, `source`, `destination`, `date`, `time`
+                    FROM `flights` INNER JOIN `flight_timings`
+                    ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
+                    WHERE DATE(`date`) = DATE(?) AND `flights`.`flight_no` = ?'''
+        if ( self.__exec(query, [date, flight]) ):
+            return self.cursor.fetchall()
+        return -1
+    
+
     ''' Get flights based on date and time '''
-    def get_flights_date_time(self, date, time):
+    def get_flights_from_date_time(self, date, time):
         query = ''' SELECT `flights`.`flight_no`, `airline`, `source`, `destination`, `date`, `time`
                     FROM `flights` INNER JOIN `flight_timings`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE DATE(`date`) = DATE(?) AND strftime('%H', `time`) >= ? '''
         if ( self.__exec(query, [date, time]) ):
+            return self.cursor.fetchall()
+        return -1
+    
+
+    ''' Get flights based on date and time of particular flight'''
+    def get_flights_from_flight_date_time(self, flight, date, time):
+        query = ''' SELECT `flights`.`flight_no`, `airline`, `source`, `destination`, `date`, `time`
+                    FROM `flights` INNER JOIN `flight_timings`
+                    ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
+                    WHERE DATE(`date`) = DATE(?) AND strftime('%H', `time`) >= ? 
+                    AND `flights`.`flight_no` = ? '''
+        if ( self.__exec(query, [date, time, flight]) ):
             return self.cursor.fetchall()
         return -1
     

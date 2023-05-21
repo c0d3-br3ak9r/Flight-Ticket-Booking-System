@@ -43,7 +43,7 @@ def get_bookings(session_id):
     if ( not user_id ):
         return 3
     bdb = BookingDB()
-    res = bdb.get_all_bookings_user(user_id)
+    res = bdb.get_all_bookings_from_user(user_id)
     fields = ["booking_id", "username", "flight_no", "source", "destination",
               "airline", "date", "time", "seat_no"]
     if res:

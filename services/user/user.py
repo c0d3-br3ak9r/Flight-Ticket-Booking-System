@@ -45,16 +45,22 @@ def validate_session(session_id):
 
 
 ''' Get available flights data based on date and time '''
-def get_flights_data(date, time):
+def get_flights_data(flight_no, date, time):
     fields = ["flight_no", "airline", "source", "destination",
               "date", "time"]
     db = FlightDB()
-    if ( date and time ):
-        res = db.get_flights_date_time(date, time[:2])
+    if ( flight_no and date and time ):
+        res = db.get_flights_from_flight_date_time(flight_no, date, time)
+    elif ( flight_no and date ):
+        res = db.get_flights_from_flight_date(flight_no, date)
+    elif ( date and time ):
+        res = db.get_flights_from_date_time(date, time)
     elif ( date ):
-        res = db.get_flights_date(date)
+        res = db.get_flights_from_date(date)
+    elif ( flight_no ):
+        res = db.get_flights_from_flight(flight_no)
     else:
-        res = db.get_all_flights()
-    if res:
+        res = db.get_all_bookings()
+    if ( res != -1 ):
         return [ dict(zip(fields, list(x))) for x in res ]
     return 3

@@ -68,9 +68,7 @@ def remove_flight_timing():
 ''' To get all bookings '''
 @app.route('/bookings', methods=["GET"])
 def get_all_bookings():
-    resp = service.get_all_bookings(request.headers.get('id'),
-                                    request.json.get('flight_no'), request.json.get('date'), 
-                                    request.json.get('time'))
+    resp = service.get_all_bookings(request.headers.get('id'), request.json)
     return get_response(resp)
 
 
