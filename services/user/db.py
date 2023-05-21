@@ -37,14 +37,6 @@ class UserDB:
             self.conn = None
 
 
-    def getall(self):
-        query = "SELECT * FROM `users`"
-        self.__exec(query)
-        res = self.cursor.fetchall()
-        for i in res:
-            print(i)
-
-
     ''' Create a new user '''
     def create_user(self, username, password):
         query = ''' INSERT INTO `users` (`username`, `password`) VALUES (?, ?) '''
@@ -54,17 +46,17 @@ class UserDB:
     ''' Get the hashed password of the user based on username '''
     def get_user_password(self, username):
         query = "SELECT `id`, `password` FROM `users` WHERE `username`=?"
-        self.__exec(query, [username])
-        res = self.cursor.fetchone()
-        return res if res else None
+        if ( self.__exec(query, [username]) ):
+            return self.cursor.fetchone()
+        return -1
     
 
     ''' Get user id and expires at if there already exists a session with same key '''
     def get_user_id_expires(self, session_key):
         query = "SELECT `user_id`, `expires_at` FROM `user_session` WHERE `session_key`=?"
-        self.__exec(query, [session_key])
-        res = self.cursor.fetchone()
-        return res
+        if ( self.__exec(query, [session_key]) ):
+            return self.cursor.fetchone()
+        return -1
     
 
     ''' Delete session key if the user already has session '''

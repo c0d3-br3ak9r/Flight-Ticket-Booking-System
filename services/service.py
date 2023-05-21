@@ -1,4 +1,4 @@
-from services import session, validation
+from services import validation
 from services.admin import admin
 from services.user import user
 from services.flight import flight
@@ -125,4 +125,11 @@ def get_all_bookings(session_id, payload):
             "count" : len(resp),
             "flights" : resp
         }
+    return 4
+
+
+''' To logout admin '''
+def logout_admin(session_id):
+    if ( session_id and admin.validate_session(session_id) ):
+        return admin.logout_admin(session_id)
     return 4

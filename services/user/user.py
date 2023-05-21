@@ -32,7 +32,9 @@ def login_user(username, password):
 ''' Logout the user '''
 def logout_user(session_id):
     db = UserDB()
-    return db.delete_session(session_id)
+    if ( db.delete_session(session_id) ):
+        return 1
+    return 3
 
 
 ''' Validates the user session '''
