@@ -5,6 +5,15 @@ from services.admin.admin_db import AdminDB
 from services.booking.booking_db import BookingDB
 
 
+''' Adds admin user to database '''
+def create_admin(username, password):
+    db = AdminDB()
+    hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+    if ( db.create_admin(username, hashed_pw.decode()) ):
+        return 1
+    return 3
+
+
 ''' Returns true if the admin credentials are valid '''
 def login_admin(username, password):
     db = AdminDB()
@@ -14,8 +23,9 @@ def login_admin(username, password):
     user_id = lst[0]
     hashed_pw = lst[1]
     if ( hashed_pw and bcrypt.checkpw(bytes(password, 'utf-8'), bytes(hashed_pw, 'utf-8')) ):
-        if ( session.create_admin_session(user_id) ):
-            return 1
+        sid = session.create_admin_session(user_id)
+        if ( sid ):
+            return sid
         return 3
     return 2
 

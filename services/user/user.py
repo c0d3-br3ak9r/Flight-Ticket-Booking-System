@@ -23,8 +23,9 @@ def login_user(username, password):
     user_id = lst[0]
     hashed_pw = lst[1]
     if ( hashed_pw and bcrypt.checkpw(bytes(password, 'utf-8'), bytes(hashed_pw, 'utf-8')) ):
-        if ( session.create_user_session(user_id) ):
-            return 1
+        sid = session.create_user_session(user_id)
+        if ( sid ):
+            return sid
         return 3
     return 2
 
@@ -41,8 +42,10 @@ def logout_user(session_id):
 def validate_session(session_id):
     db = UserDB()
     expires_at = db.get_user_id_expires(session_id)
-    if ( expires_at and datetime.datetime.strptime(expires_at[1], '%Y-%m-%d %H:%M:%S') > datetime.datetime.now() ):
-        return True
+    if ( expires_at ):
+        if ( datetime.datetime.strptime(expires_at[1], '%Y-%m-%d %H:%M:%S') > datetime.datetime.now() ):
+            return True
+        db.delete_session(session_id)
     return False
 
 
@@ -50,7 +53,7 @@ def validate_session(session_id):
 def get_flights_data(flight_no, date, time):
     fields = ["flight_no", "airline", "source", "destination",
               "date", "time"]
-    db = FlightDB()
+    db = FlightDB())
     if ( flight_no and date and time ):
         res = db.get_flights_from_flight_date_time(flight_no, date, time)
     elif ( flight_no and date ):
@@ -62,7 +65,7 @@ def get_flights_data(flight_no, date, time):
     elif ( flight_no ):
         res = db.get_flights_from_flight(flight_no)
     else:
-        res = db.get_all_bookings()
+        res = db.get_all_flights()
     if ( res != -1 ):
         return [ dict(zip(fields, list(x))) for x in res ]
     return 3

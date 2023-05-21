@@ -24,7 +24,9 @@ def create_admin_session(user_id):
     db.delete_session(user_id)
     session_id = generate_session_key().hexdigest()
     expires_at = get_expires_at()
-    return db.create_session(user_id, session_id, expires_at)
+    if ( db.create_session(user_id, session_id, expires_at) ):
+        return session_id
+    return 0
 
 
 ''' Insert the user session information into table '''
@@ -33,4 +35,6 @@ def create_user_session(user_id):
     db.delete_session(user_id)
     session_id = generate_session_key().hexdigest()
     expires_at = get_expires_at()
-    return db.create_session(user_id, session_id, expires_at)
+    if ( db.create_session(user_id, session_id, expires_at) ):
+        return session_id
+    return 0

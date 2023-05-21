@@ -7,9 +7,17 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return ("Hello, World!", 200)
+    return ("Flight Ticket Booking System!", 200)
 
 
+''' To create a new admin user '''
+@app.route('/admin/signup', methods=["POST"])
+def create_admin():
+    resp = service.create_admin(request.json)
+    return get_response(resp)
+
+
+# Admin username - admin_user
 # Admin password - cb!NmgQ07eX5
 ''' To authenticate admin user '''
 @app.route('/admin/login', methods=["POST"])
