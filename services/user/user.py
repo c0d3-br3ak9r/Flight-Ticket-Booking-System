@@ -53,7 +53,7 @@ def validate_session(session_id):
 def get_flights_data(flight_no, date, time):
     fields = ["flight_no", "airline", "source", "destination",
               "date", "time"]
-    db = FlightDB())
+    db = FlightDB()
     if ( flight_no and date and time ):
         res = db.get_flights_from_flight_date_time(flight_no, date, time)
     elif ( flight_no and date ):
