@@ -147,7 +147,7 @@ def get_all_bookings(session_id, payload):
         flight = flight if str.isalnum(flight) else None
         date = date if validation.is_valid_date(date) else None
         time = time if validation.is_valid_time(time) else None
-        
+
         resp = admin.get_bookings(flight, date, time)
         return {
             "count" : len(resp),

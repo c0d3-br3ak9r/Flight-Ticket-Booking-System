@@ -1,7 +1,6 @@
-import sqlite3
-import os
+from models.db import DB
 
-class UserDB:
+class UserDB(DB):
 
     create_user_table = '''
                             CREATE TABLE IF NOT EXISTS `users` (
@@ -21,32 +20,24 @@ class UserDB:
                                     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
                                 )
                                 '''
-    
-    enforce_foreign_key = "PRAGMA foreign_keys = ON;"
 
 
     def __init__(self):
-        try:
-            self.conn = sqlite3.connect(os.path.dirname(os.path.abspath(__name__)) + "\\Flight-Ticket-Booking-System\\models\\flight_ticket_booking_database.db")
-            self.cursor = self.conn.cursor()
-            self.__exec(self.create_user_table)
-            self.__exec(self.create_user_session_table)
-            self.__exec(self.enforce_foreign_key)
-        except sqlite3.Error as e:
-            print("DB ERROR :", e)
-            self.conn = None
+        super().__init__()
+        self._exec(self.create_user_table)
+        self._exec(self.create_user_session_table)
 
 
     ''' Create a new user '''
     def create_user(self, username, password):
         query = ''' INSERT INTO `users` (`username`, `password`) VALUES (?, ?) '''
-        return self.__exec(query, [username, password])
+        return self._exec(query, [username, password])
 
 
     ''' Get the hashed password of the user based on username '''
     def get_user_password(self, username):
         query = "SELECT `id`, `password` FROM `users` WHERE `username`=?"
-        if ( self.__exec(query, [username]) ):
+        if ( self._exec(query, [username]) ):
             return self.cursor.fetchone()
         return -1
     
@@ -54,7 +45,7 @@ class UserDB:
     ''' Get user id and expires at if there already exists a session with same key '''
     def get_user_id_expires(self, session_key):
         query = "SELECT `user_id`, `expires_at` FROM `user_session` WHERE `session_key`=?"
-        if ( self.__exec(query, [session_key]) ):
+        if ( self._exec(query, [session_key]) ):
             return self.cursor.fetchone()
         return -1
     
@@ -62,26 +53,15 @@ class UserDB:
     ''' Delete session key if the user already has session '''
     def delete_session(self, session_id):
         query = "DELETE FROM `user_session` WHERE `session_key`=?"
-        return self.__exec(query, [session_id])
+        return self._exec(query, [session_id])
 
 
     ''' Creates a new user session with session key and expires at as 24hr interval '''
     def create_session(self, user_id, session_key, expires_at):
         query = '''INSERT INTO `user_session` (`user_id`, `session_key`, `expires_at`)
                 VALUES (?, ?, ?)'''
-        return self.__exec(query, [user_id, session_key, expires_at])
+        return self._exec(query, [user_id, session_key, expires_at])
     
 
-    ''' Executes the SQL query '''
-    def __exec(self, query, params=[]):
-        try:
-            self.cursor.execute(query, params)
-            self.conn.commit()
-            return 1
-        except sqlite3.Error as e:
-            print(e)
-            return 0
-
     def __del__(self):
-        self.cursor.close()
-        self.conn.close()
+        return super().__del__()

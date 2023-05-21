@@ -1,7 +1,6 @@
-import sqlite3
-import os
+from models.db import DB
 
-class BookingDB:
+class BookingDB(DB):
 
     create_booking_table = '''
                             CREATE TABLE IF NOT EXISTS `bookings` (
@@ -15,20 +14,11 @@ class BookingDB:
                                 REFERENCES `flight_timings`(`id`)
                             )
                             '''
-    
-    
-    enforce_foreign_key = "PRAGMA foreign_keys = ON;"
 
 
     def __init__(self):
-        try:
-            self.conn = sqlite3.connect(os.path.dirname(os.path.abspath(__name__)) + "\\Flight-Ticket-Booking-System\\models\\flight_ticket_booking_database.db")
-            self.cursor = self.conn.cursor()
-            self.__exec(self.create_booking_table)
-            self.__exec(self.enforce_foreign_key)
-        except sqlite3.Error as e:
-            print("DB ERROR :", e)
-            self.conn = None
+        super().__init__()
+        self._exec(self.create_booking_table)
 
 
     def get_all_bookings(self):
@@ -40,7 +30,7 @@ class BookingDB:
                     ON `bookings`.`flight_timing_id` = `flight_timings`.`id`
                     INNER JOIN `flights`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` '''
-        if ( self.__exec(query) ):
+        if ( self._exec(query) ):
             return self.cursor.fetchall()
         return -1
     
@@ -56,7 +46,7 @@ class BookingDB:
                     INNER JOIN `flights`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE `users`.`id` = ? '''
-        if ( self.__exec(query, [user_id]) ):
+        if ( self._exec(query, [user_id]) ):
             return self.cursor.fetchall()
         return -1
     
@@ -72,7 +62,7 @@ class BookingDB:
                     INNER JOIN `flights`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE `flights`.`flight_no` = ? '''
-        if ( self.__exec(query, [flight]) ):
+        if ( self._exec(query, [flight]) ):
             return self.cursor.fetchall()
         return -1
     
@@ -88,7 +78,7 @@ class BookingDB:
                     INNER JOIN `flights`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE `flight_timings`.`date` = ?'''
-        if ( self.__exec(query, [date]) ):
+        if ( self._exec(query, [date]) ):
             return self.cursor.fetchall()
         return -1
     
@@ -104,7 +94,7 @@ class BookingDB:
                     INNER JOIN `flights`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE `flights`.`flight_no` = ? AND `flight_timings`.`date` = ?'''
-        if ( self.__exec(query, [flight, date]) ):
+        if ( self._exec(query, [flight, date]) ):
             return self.cursor.fetchall()
         return -1
 
@@ -121,7 +111,7 @@ class BookingDB:
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE `flights`.`flight_no` = ? AND `flight_timings`.`time` = ? 
                     AND `flight_timings`.`date` = ?'''
-        if ( self.__exec(query, [flight, time, date]) ):
+        if ( self._exec(query, [flight, time, date]) ):
             return self.cursor.fetchall()
         return -1
 
@@ -130,7 +120,7 @@ class BookingDB:
     def create_booking(self, user_id, timing_id, seat_no):
         query = ''' INSERT INTO `bookings` (`user_id`, `flight_timing_id`, `seat_no`) 
                     VALUES (?, ?, ?) '''
-        return self.__exec(query, [user_id, timing_id, seat_no])
+        return self._exec(query, [user_id, timing_id, seat_no])
     
 
     ''' Get booked seats '''
@@ -139,7 +129,7 @@ class BookingDB:
                    WHERE `bookings`.`flight_timing_id` = `flight_timings`.`id`
                    AND `flight_timings`.`flight_no`=? AND `flight_timings`.`date`=?
                    AND `flight_timings`.`time`=? '''
-        if ( self.__exec(query, [flight_no, date, time]) ):
+        if ( self._exec(query, [flight_no, date, time]) ):
             return self.cursor.fetchone()
         return -1
     
@@ -147,19 +137,8 @@ class BookingDB:
     ''' Delete booking of flight'''
     def delete_booking(self, user_id, flight_timing_id):
         query = "DELETE FROM `bookings` WHERE `user_id`=? AND `flight_timing_id` = ?"
-        return self.__exec(query, [user_id, flight_timing_id])
+        return self._exec(query, [user_id, flight_timing_id])
     
 
-    ''' Executes the SQL query '''
-    def __exec(self, query, params=[]):
-        try:
-            self.cursor.execute(query, params)
-            self.conn.commit()
-            return 1
-        except sqlite3.Error as e:
-            print(e)
-            return 0
-
     def __del__(self):
-        self.cursor.close()
-        self.conn.close()
+        return super().__del__()

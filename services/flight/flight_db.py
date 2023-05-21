@@ -1,7 +1,6 @@
-import sqlite3
-import os
+from models.db import DB
 
-class FlightDB:
+class FlightDB(DB):
 
     create_flight_table = '''
                             CREATE TABLE IF NOT EXISTS `flights` (
@@ -23,18 +22,11 @@ class FlightDB:
                                 )
                                 ''' 
 
-    enforce_foreign_key = "PRAGMA foreign_keys = ON;"   
 
     def __init__(self):
-        try:
-            self.conn = sqlite3.connect(os.path.dirname(os.path.abspath(__name__)) + "\\Flight-Ticket-Booking-System\\models\\flight_ticket_booking_database.db")
-            self.cursor = self.conn.cursor()
-            self.__exec(self.create_flight_table)
-            self.__exec(self.create_flight_timing_table)
-            self.__exec(self.enforce_foreign_key)
-        except sqlite3.Error as e:
-            print("DB ERROR :", e)
-            self.conn = None
+        super().__init__()
+        self._exec(self.create_flight_table)
+        self._exec(self.create_flight_timing_table)
 
 
     ''' Get all upcoming flights '''
@@ -43,7 +35,7 @@ class FlightDB:
                     FROM `flights` INNER JOIN `flight_timings`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE DATE(`date`) >= DATE('now')'''
-        if ( self.__exec(query) ):
+        if ( self._exec(query) ):
             return self.cursor.fetchall()
         return -1
     
@@ -54,7 +46,7 @@ class FlightDB:
                     FROM `flights` INNER JOIN `flight_timings`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE `flights`.`flight_no` = ?'''
-        if ( self.__exec(query, [flight]) ):
+        if ( self._exec(query, [flight]) ):
             return self.cursor.fetchall()
         return -1
     
@@ -65,7 +57,7 @@ class FlightDB:
                     FROM `flights` INNER JOIN `flight_timings`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE DATE(`date`) = DATE(?)'''
-        if ( self.__exec(query, [date]) ):
+        if ( self._exec(query, [date]) ):
             return self.cursor.fetchall()
         return -1
     
@@ -76,7 +68,7 @@ class FlightDB:
                     FROM `flights` INNER JOIN `flight_timings`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE DATE(`date`) = DATE(?) AND `flights`.`flight_no` = ?'''
-        if ( self.__exec(query, [date, flight]) ):
+        if ( self._exec(query, [date, flight]) ):
             return self.cursor.fetchall()
         return -1
     
@@ -87,7 +79,7 @@ class FlightDB:
                     FROM `flights` INNER JOIN `flight_timings`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE DATE(`date`) = DATE(?) AND strftime('%H', `time`) >= ? '''
-        if ( self.__exec(query, [date, time]) ):
+        if ( self._exec(query, [date, time]) ):
             return self.cursor.fetchall()
         return -1
     
@@ -99,7 +91,7 @@ class FlightDB:
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
                     WHERE DATE(`date`) = DATE(?) AND strftime('%H', `time`) >= ? 
                     AND `flights`.`flight_no` = ? '''
-        if ( self.__exec(query, [date, time, flight]) ):
+        if ( self._exec(query, [date, time, flight]) ):
             return self.cursor.fetchall()
         return -1
     
@@ -108,7 +100,7 @@ class FlightDB:
     def get_flight_timing_id(self, flight_no, date, time):
         query = ''' SELECT `id` FROM `flight_timings` WHERE
                     `flight_no`=? AND `date`=? AND `time`=? '''
-        if ( self.__exec(query, [flight_no, date, time]) ):
+        if ( self._exec(query, [flight_no, date, time]) ):
             return self.cursor.fetchone()
         return -1
 
@@ -117,58 +109,47 @@ class FlightDB:
     def create_flight(self, flight_no, airline, source, destination):
         query = '''INSERT INTO `flights` (`flight_no`, `airline`, `source`, `destination`)
         VALUES (?, ?, ?, ?)'''
-        return self.__exec(query, [flight_no, airline, source, destination])
+        return self._exec(query, [flight_no, airline, source, destination])
         
 
     ''' Creates a new flight timing '''
     def create_flight_timing(self, flight_no, date, time):
         query = '''INSERT INTO `flight_timings` (`flight_no`, `date`, `time`) VALUES
                     (?, ?, ?)'''
-        return self.__exec(query, [flight_no, date, time])
+        return self._exec(query, [flight_no, date, time])
     
 
     ''' Delete existing flight '''
     def delete_flight(self, flight_no):
         query = "DELETE FROM `flights` WHERE `flight_no`=?"
-        return self.__exec(query, [flight_no])
+        return self._exec(query, [flight_no])
     
 
     ''' Delete all flight timings of particular flight '''
     def delete_flight_timing_from_flight(self, flight_no):
         query = "DELETE FROM `flight_timings` WHERE `flight_no`=?"
-        return self.__exec(query, [flight_no])
+        return self._exec(query, [flight_no])
     
 
     ''' Delete all flight timings at given date'''
     def delete_flight_timing_from_date(self, date):
         query = "DELETE FROM `flight_timings` WHERE `date`=?"
-        return self.__exec(query, [date])
+        return self._exec(query, [date])
     
 
     ''' Delete all flight timings of particular flight at given date '''
     def delete_flight_timing_from_flight_date(self, flight_no, date):
         query = '''DELETE FROM `flight_timings` WHERE
                 `flight_no`=? AND `date`=?'''
-        return self.__exec(query, [flight_no, date])
+        return self._exec(query, [flight_no, date])
 
 
     ''' Delete all flight timings of particular flight at given date on given time'''
     def delete_flight_timing_from_flight_date_time(self, flight_no, date, time):
         query = '''DELETE FROM `flight_timings` WHERE 
                 `flight_no`=? AND `date`=? AND `time`=?'''
-        return self.__exec(query, [flight_no, date, time])
+        return self._exec(query, [flight_no, date, time])
     
     
-    ''' Executes the SQL query '''
-    def __exec(self, query, params=[]):
-        try:
-            self.cursor.execute(query, params)
-            self.conn.commit()
-            return 1
-        except sqlite3.Error as e:
-            print(e)
-            return 0
-
     def __del__(self):
-        self.cursor.close()
-        self.conn.close()
+        return super().__del__()

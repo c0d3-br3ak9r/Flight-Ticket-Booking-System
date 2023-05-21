@@ -14,7 +14,7 @@ def login_admin(username, password):
     user_id = lst[0]
     hashed_pw = lst[1]
     if ( hashed_pw and bcrypt.checkpw(bytes(password, 'utf-8'), bytes(hashed_pw, 'utf-8')) ):
-        if ( session.create_user_session(user_id) ):
+        if ( session.create_admin_session(user_id) ):
             return 1
         return 3
     return 2
@@ -24,8 +24,10 @@ def login_admin(username, password):
 def validate_session(session_id):
     db = AdminDB()
     expires_at = db.session_exists(session_id)
-    if ( expires_at and datetime.datetime.strptime(expires_at[0], '%Y-%m-%d %H:%M:%S') > datetime.datetime.now() ):
-        return True
+    if ( expires_at ):
+        if ( datetime.datetime.strptime(expires_at[0], '%Y-%m-%d %H:%M:%S') > datetime.datetime.now() ):
+            return True
+        db.delete_session(session_id)
     return False
 
 

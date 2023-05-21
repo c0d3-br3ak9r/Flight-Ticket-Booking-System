@@ -1,7 +1,6 @@
-import sqlite3
-import os
+from models.db import DB
 
-class AdminDB:
+class AdminDB(DB):
 
     create_admin_table = '''
                             CREATE TABLE IF NOT EXISTS `admin_users` (
@@ -26,21 +25,15 @@ class AdminDB:
 
 
     def __init__(self):
-        try:
-            self.conn = sqlite3.connect(os.path.dirname(os.path.abspath(__name__)) + "\\Flight-Ticket-Booking-System\\models\\flight_ticket_booking_database.db")
-            self.cursor = self.conn.cursor()
-            self.__exec(self.create_admin_table)
-            self.__exec(self.create_admin_session_table)
-            self.__exec(self.enforce_foreign_key)
-        except sqlite3.Error as e:
-            print("DB ERROR :", e)
-            self.conn = None
+        super().__init__()
+        self._exec(self.create_admin_table)
+        self._exec(self.create_admin_session_table)
 
 
     ''' Get the hashed password of the admin user based on username '''
     def get_admin_password(self, username):
         query = "SELECT id, password FROM admin_users WHERE username=?"
-        if ( self.__exec(query, [username]) ):
+        if ( self._exec(query, [username]) ):
             return self.cursor.fetchone()
         return -1
     
@@ -48,34 +41,23 @@ class AdminDB:
     ''' Checks whether there already exists a session with same key '''
     def session_exists(self, session_key):
         query = "SELECT expires_at FROM admin_session WHERE session_key=?"
-        if ( self.__exec(query, [session_key]) ):
+        if ( self._exec(query, [session_key]) ):
             return self.cursor.fetchone()
         return -1
     
 
     ''' Delete session key if the user already has session '''
-    def delete_session(self, user_id):
-        query = "DELETE FROM admin_session WHERE admin_id=?"
-        return self.__exec(query, [user_id])
+    def delete_session(self, session_key):
+        query = "DELETE FROM admin_session WHERE session_key=?"
+        return self._exec(query, [session_key])
 
 
     ''' Creates a new admin session with session key and expires at as 24hr interval '''
     def create_session(self, user_id, session_key, expires_at):
         query = '''INSERT INTO admin_session (admin_id, session_key, expires_at)
                 VALUES (?, ?, ?)'''
-        return self.__exec(query, [user_id, session_key, expires_at])
-    
+        return self._exec(query, [user_id, session_key, expires_at])
 
-    ''' Executes the SQL query '''
-    def __exec(self, query, params=[]):
-        try:
-            self.cursor.execute(query, params)
-            self.conn.commit()
-            return 1
-        except sqlite3.Error as e:
-            print(e)
-            return 0
 
     def __del__(self):
-        self.cursor.close()
-        self.conn.close()
+        return super().__del__()

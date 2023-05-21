@@ -1,8 +1,8 @@
 import os
 import hashlib
 import datetime
-from services.user.db import UserDB
-from services.admin.db import AdminDB
+from services.user.user_db import UserDB
+from services.admin.admin_db import AdminDB
 
 
 ''' Creates session ID by getting random values and current timestamp and passing them to SHA256 '''
