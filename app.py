@@ -1,14 +1,9 @@
 from flask import Flask, request
-from services import session, service
-from services.admin import admin
-from services.flight import flight
+from services import service
 
 
 app = Flask(__name__)
 
-
-# To load environment variables
-app.config.from_pyfile('settings.py')
 
 @app.route('/')
 def index():
@@ -19,49 +14,35 @@ def index():
 ''' To authenticate admin user '''
 @app.route('/admin/login', methods=["POST"])
 def admin_login():
-    username = request.json["username"]
-    password = request.json["password"]
-    res = admin.is_valid_user(username, password)
-    if res:
-        if ( session.create_admin_session(res) ):
-            return "Success", 200
-    return "Failed", 401
+    resp = service.authenticate_admin(request.json)
+    return get_response(resp)
 
 
 ''' To create a new flight '''
 @app.route('/flight', methods=["POST"])
 def create_flight():
-    resp = service.create_flight(request.headers.get("id"),
-                                request.json.get("flight_no"),
-                                request.json.get("airline"), 
-                                request.json.get("source"),
-                                request.json.get("destination"))
+    resp = service.create_flight(request.headers.get("id"), request.json)
     return get_response(resp)
 
 
 ''' To add flight timing for already created flight '''
 @app.route('/flight-timing', methods=["POST"])
 def create_flight_timing():
-    resp = service.create_flight_timing(request.headers.get("id"),
-                                        request.json.get("flight_no"),
-                                        request.json.get("date"), 
-                                        request.json.get("time"))
+    resp = service.create_flight_timing(request.headers.get("id"), request.json)
     return get_response(resp)
 
 
 ''' To remove a flight '''
 @app.route('/flight', methods=["DELETE"])
 def remove_flight():
-    resp = service.remove_flight(request.headers.get("id"), request.json.get("flight_no"))
+    resp = service.remove_flight(request.headers.get("id"), request.json)
     return get_response(resp)
 
 
 ''' To remove a flight timing '''
 @app.route('/flight-timing', methods=["DELETE"])
 def remove_flight_timing():
-    resp = service.remove_flight_timing(request.headers.get('id'),
-                                        request.json.get('flight_no'), request.json.get('date'), 
-                                        request.json.get('time'))
+    resp = service.remove_flight_timing(request.headers.get('id'), request.json)
     return get_response(resp)
 
 
@@ -69,6 +50,13 @@ def remove_flight_timing():
 @app.route('/bookings', methods=["GET"])
 def get_all_bookings():
     resp = service.get_all_bookings(request.headers.get('id'), request.json)
+    return get_response(resp)
+
+
+''' To logout admin '''
+@app.route('/admin/logout', methods=["POST"])
+def logout_admin():
+    resp = service.logout_admin(request.headers.get('id'))
     return get_response(resp)
 
 
