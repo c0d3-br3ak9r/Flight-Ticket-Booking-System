@@ -1,7 +1,7 @@
 import datetime
 from services import validation
 import bcrypt
-from services.admin.db import AdminDB
+from services.admin.admin_db import AdminDB
 from services.booking.booking_db import BookingDB
 
 ''' Returns true if the admin credentials are valid '''
@@ -44,4 +44,12 @@ def get_bookings(flight_no, date, time):
         res = db.get_all_bookings()
     if ( res != -1 ):
         return [ dict(zip(fields, list(x))) for x in res ]
+    return 3
+
+
+''' Logout the admin '''
+def logout_admin(session_id):
+    db = AdminDB()
+    if ( db.delete_session(session_id) ):
+        return 1
     return 3

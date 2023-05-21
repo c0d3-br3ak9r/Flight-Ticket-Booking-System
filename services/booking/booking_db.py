@@ -44,6 +44,7 @@ class BookingDB:
             return self.cursor.fetchall()
         return -1
     
+    
     ''' Get all bookings of a particular user '''
     def get_all_bookings_from_user(self, user_id):
         query = '''SELECT `bookings`.`id`, `username`, `flights`.`flight_no`, `source`,

@@ -1,7 +1,7 @@
 import datetime
 from services import session
-from services.user.db import UserDB
-from services.flight.db import FlightDB
+from services.user.user_db import UserDB
+from services.flight.flight_db import FlightDB
 import bcrypt
 
 

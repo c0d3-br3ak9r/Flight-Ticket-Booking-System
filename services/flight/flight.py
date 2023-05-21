@@ -1,4 +1,4 @@
-from services.flight.db import FlightDB
+from services.flight.flight_db import FlightDB
 
 
 ''' Add a new flight '''

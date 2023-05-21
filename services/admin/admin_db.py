@@ -37,34 +37,26 @@ class AdminDB:
             self.conn = None
 
 
-    def getall(self):
-        query = "SELECT * FROM admin_users"
-        self.__exec(query)
-        res = self.cursor.fetchall()
-        for i in res:
-            print(i)
-
-
     ''' Get the hashed password of the admin user based on username '''
     def get_admin_password(self, username):
         query = "SELECT id, password FROM admin_users WHERE username=?"
-        self.__exec(query, [username])
-        res = self.cursor.fetchone()
-        return res if res else None
+        if ( self.__exec(query, [username]) ):
+            return self.cursor.fetchone()
+        return -1
     
 
     ''' Checks whether there already exists a session with same key '''
     def session_exists(self, session_key):
         query = "SELECT expires_at FROM admin_session WHERE session_key=?"
-        self.__exec(query, [session_key])
-        res = self.cursor.fetchone()
-        return res
+        if ( self.__exec(query, [session_key]) ):
+            return self.cursor.fetchone()
+        return -1
     
 
     ''' Delete session key if the user already has session '''
     def delete_session(self, user_id):
         query = "DELETE FROM admin_session WHERE admin_id=?"
-        self.__exec(query, [user_id])
+        return self.__exec(query, [user_id])
 
 
     ''' Creates a new admin session with session key and expires at as 24hr interval '''
