@@ -46,7 +46,6 @@ def book_flight(session_id, payload):
         date = payload.get("date")
         time = payload.get("time")
         seat_no = payload.get("seat_no")
-
         if ( str.isalnum(flight) and validation.is_valid_date(date)
             and validation.is_valid_time(time) 
             and ( not seat_no or ( 1 <= seat_no <= 60 ) ) ):

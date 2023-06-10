@@ -39,7 +39,7 @@ class AdminDB(DB):
         query = "SELECT `id`, `password` FROM `admin_users` WHERE `username`=?"
         if ( self._exec(query, [username]) ):
             return self.cursor.fetchone()
-        return -1
+        return 0
     
 
     ''' Checks whether there already exists a session with same key '''
@@ -47,13 +47,19 @@ class AdminDB(DB):
         query = "SELECT `expires_at` FROM `admin_session` WHERE `session_key`=?"
         if ( self._exec(query, [session_key]) ):
             return self.cursor.fetchone()
-        return -1
+        return 0
     
 
     ''' Delete session key if the user already has session '''
     def delete_session(self, session_key):
         query = "DELETE FROM `admin_session` WHERE `session_key`=?"
         return self._exec(query, [session_key])
+    
+
+    ''' Remove session key if the user already has session '''
+    def delete_session_by_id(self, user_id):
+        query = "DELETE FROM `admin_session` WHERE `admin_id`=?"
+        return self._exec(query, [user_id])
 
 
     ''' Creates a new admin session with session key and expires at as 24hr interval '''

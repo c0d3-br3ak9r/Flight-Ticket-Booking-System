@@ -11,27 +11,29 @@ def book_flight(session_id, flight_no, date, time, seat_no):
     udb = UserDB()
 
     booked_seats = bdb.get_booked_seats(flight_no, date, time)
-    booked_seats = [] if booked_seats == None else list(booked_seats)
     if ( booked_seats == -1 ):
         return 3
+    booked_seats = [] if not booked_seats else [x[0] for x in booked_seats]
     
     # If seat no is not given, pick first available seat
-    if ( not seat_no ):                     
+    if ( not seat_no ):               
         for i in range(1, 61):
             if ( i not in booked_seats ):
                 seat_no = i
                 break
 
     if ( seat_no not in booked_seats ):
-        timing_id = fdb.get_flight_timing_id(flight_no, date, time)[0]
+        timing_id = fdb.get_flight_timing_id(flight_no, date, time)
         del fdb
-        if ( not timing_id ):
+        if ( timing_id == -1 ):
             return 3
+        timing_id = timing_id[0]
         
-        user_id = udb.get_user_id_expires(session_id)[0]
+        user_id = udb.get_user_id_expires(session_id)
         del udb
         if ( not user_id ):
             return 3
+        user_id = user_id[0]
         
         return bdb.create_booking(user_id, timing_id, seat_no)
     return 2
@@ -40,11 +42,12 @@ def book_flight(session_id, flight_no, date, time, seat_no):
 ''' Get user id from session id and get all bookings '''
 def get_bookings(session_id):
     udb = UserDB()
-    user_id = udb.get_user_id_expires(session_id)[0]
+    user_id = udb.get_user_id_expires(session_id)
     del udb
 
     if ( not user_id ):
         return 3
+    user_id = user_id[0]
     
     bdb = BookingDB()
     res = bdb.get_all_bookings_from_user(user_id)

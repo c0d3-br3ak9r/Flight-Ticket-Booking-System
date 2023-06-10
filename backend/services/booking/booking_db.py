@@ -68,7 +68,7 @@ class BookingDB(DB):
     
 
     ''' Get all bookings at given date '''
-    def get_all_bookings_from_flight_date(self, date):
+    def get_all_bookings_from_date(self, date):
         query = '''SELECT `bookings`.`id`, `username`, `flights`.`flight_no`, `source`,
                          `destination`, `airline`, `date`, `time`, `seat_no` 
                     FROM `users` INNER JOIN `bookings`
@@ -130,7 +130,7 @@ class BookingDB(DB):
                    AND `flight_timings`.`flight_no`=? AND `flight_timings`.`date`=?
                    AND `flight_timings`.`time`=? '''
         if ( self._exec(query, [flight_no, date, time]) ):
-            return self.cursor.fetchone()
+            return self.cursor.fetchall()
         return -1
     
 

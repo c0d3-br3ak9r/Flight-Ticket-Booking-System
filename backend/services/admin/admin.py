@@ -25,7 +25,7 @@ def login_admin(username, password):
     if ( hashed_pw and bcrypt.checkpw(bytes(password, 'utf-8'), bytes(hashed_pw, 'utf-8')) ):
         sid = session.create_admin_session(user_id)
         if ( sid ):
-            return sid
+            return {"session_id" : sid}
         return 3
     return 2
 
@@ -53,7 +53,7 @@ def get_bookings(flight_no, date, time):
     elif ( flight_no ):
         res = db.get_all_bookings_from_flight(flight_no)
     elif ( date ):
-        res = db.get_all_bookings_from_flight_date(date)
+        res = db.get_all_bookings_from_date(date)
     else:
         res = db.get_all_bookings()
     if ( res != -1 ):

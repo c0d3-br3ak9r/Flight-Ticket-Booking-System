@@ -25,7 +25,7 @@ def login_user(username, password):
     if ( hashed_pw and bcrypt.checkpw(bytes(password, 'utf-8'), bytes(hashed_pw, 'utf-8')) ):
         sid = session.create_user_session(user_id)
         if ( sid ):
-            return sid
+            return {"session_id" : sid}
         return 3
     return 2
 

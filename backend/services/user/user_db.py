@@ -39,7 +39,7 @@ class UserDB(DB):
         query = "SELECT `id`, `password` FROM `users` WHERE `username`=?"
         if ( self._exec(query, [username]) ):
             return self.cursor.fetchone()
-        return -1
+        return 0
     
 
     ''' Get user id and expires at if there already exists a session with same key '''
@@ -47,13 +47,19 @@ class UserDB(DB):
         query = "SELECT `user_id`, `expires_at` FROM `user_session` WHERE `session_key`=?"
         if ( self._exec(query, [session_key]) ):
             return self.cursor.fetchone()
-        return -1
+        return 0
     
 
     ''' Delete session key if the user already has session '''
     def delete_session(self, session_id):
         query = "DELETE FROM `user_session` WHERE `session_key`=?"
         return self._exec(query, [session_id])
+    
+
+    ''' Remove session key if the user already has session '''
+    def delete_session_by_id(self, user_id):
+        query = "DELETE FROM `user_session` WHERE `user_id`=?"
+        return self._exec(query, [user_id])
 
 
     ''' Creates a new user session with session key and expires at as 24hr interval '''
