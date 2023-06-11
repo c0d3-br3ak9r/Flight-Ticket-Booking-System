@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-export const AdminSignup = () => {
+export const Signup = () => {
     const usernameRef = useRef();
     const passwordRef = useRef();
     const cPasswordRef = useRef();
@@ -24,7 +24,7 @@ export const AdminSignup = () => {
                 body: JSON.stringify(data),
             }).then((res) => {
                 if ( res.status === 200 ) {
-                    window.open('/admin/signup', "_self");
+                    window.open('/signup', "_self");
                 } else if ( res.status === 400 ) {
                     setInfo("Invalid username or password");
                 } else if ( res.status === 500 ) {
@@ -39,17 +39,17 @@ export const AdminSignup = () => {
     return (
     <>
         <div className="flex justify-center items-center flex-col m-auto h-screen bg-[#05ad32] border">
-            <p className="text-3xl font-bold">Admin Signup</p>
-            <div className="w-1/2 flex flex-row justify-evenly mt-8">
+            <p className="text-3xl font-bold">Signup</p>
+            <div className="w-1/2 flex flex-row mt-8">
                 <p className="text-xl">Username</p>
                 <input ref={usernameRef} type="text" className="w-60 h-10 border-4 rounded-md focus:outline-none focus:ring focus:border-green-500" />
             </div>
-            <div className="w-1/2 flex flex-row justify-evenly mt-8">
+            <div className="w-1/2 flex flex-row mt-8">
                 <p className="text-xl">Password</p>
                 <input ref={passwordRef} type="text" className="w-60 h-10 border-4 rounded-md focus:outline-none focus:ring focus:border-green-500" />
             </div>
             <span title="Hiii">i</span>
-            <div className="w-1/2 flex flex-row justify-evenly mt-8">
+            <div className="w-1/2 flex flex-row mt-8">
                 <p className="text-xl">Confirm Password</p>
                 <input ref={cPasswordRef} type="text" className="w-60 h-10 border-4 rounded-md focus:outline-none focus:ring focus:border-green-500" />
             </div>
