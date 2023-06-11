@@ -1,4 +1,6 @@
 import { useRef, useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
 export const Signup = () => {
     const usernameRef = useRef();
@@ -6,7 +8,7 @@ export const Signup = () => {
     const cPasswordRef = useRef();
     const [info, setInfo] = useState("");
 
-    const login = () => {
+    const signup = () => {
         const username = usernameRef.current.value;
         const password = passwordRef.current.value;
         const cPassword = cPasswordRef.current.value;
@@ -38,23 +40,30 @@ export const Signup = () => {
 
     return (
     <>
-        <div className="flex justify-center items-center flex-col m-auto h-screen bg-[#05ad32] border">
-            <p className="text-3xl font-bold">Signup</p>
-            <div className="w-1/2 flex flex-row mt-8">
-                <p className="text-xl">Username</p>
-                <input ref={usernameRef} type="text" className="w-60 h-10 border-4 rounded-md focus:outline-none focus:ring focus:border-green-500" />
+        <div className="flex justify-center items-center flex-col m-auto h-screen bg-[#e8e6e6] border">
+        <div className="p-10 sm:w-1/2 lg:w-2/5 h-auto flex justify-center flex-col m-auto h-screen bg-[#e8e6e6aa] border">
+            <p className="text-3xl text-center font-bold mt-8">Signup</p>
+
+            <div className="flex flex-row items-center">
+                <p className="text-xl mt-8">Username</p>
+                <FontAwesomeIcon className="ml-2 mt-9" icon={faInfoCircle} title="Username must consist of only alphabets, digits and underscore with length between 4 and 20"/>
+            </div>            
+            <input ref={usernameRef} type="text" placeholder="Username goes here..." className="p-4 mt-4 w-full h-10 border-1 rounded-20 focus:outline-none focus:ring focus:border-green-500" />
+
+            <div className="flex flex-row items-center">
+                <p className="text-xl mt-8">Password</p>
+                <FontAwesomeIcon className="ml-2 mt-9" icon={faInfoCircle} title="Password must contain of atleast one lowercase alphabet, one uppercase alphabet, one digit and one special character with length between 8 and 20"/>
             </div>
-            <div className="w-1/2 flex flex-row mt-8">
-                <p className="text-xl">Password</p>
-                <input ref={passwordRef} type="text" className="w-60 h-10 border-4 rounded-md focus:outline-none focus:ring focus:border-green-500" />
+            <input ref={passwordRef} type="password" placeholder="Password goes here..." className="p-4 mt-4 w-full h-10 border-1 rounded-20 focus:outline-none focus:ring focus:border-green-500" />
+
+            <p className="text-xl mt-8">Confirm Password</p>
+            <input ref={cPasswordRef} type="password" placeholder="Confirm your password..." className="p-4 mt-4 w-full h-10 border-1 rounded-20 focus:outline-none focus:ring focus:border-green-500" />
+
+            <div className="flex justify-center">
+                <p className="text-red-500">{info}</p>
+                <button onClick={signup} className="text-xl w-24 h-10 bg-[#85ffff] hover:bg-[#85ffa5] rounded-md mt-8">Submit</button>
             </div>
-            <span title="Hiii">i</span>
-            <div className="w-1/2 flex flex-row mt-8">
-                <p className="text-xl">Confirm Password</p>
-                <input ref={cPasswordRef} type="text" className="w-60 h-10 border-4 rounded-md focus:outline-none focus:ring focus:border-green-500" />
-            </div>
-            <p className="text-red-500">{info}</p>
-            <button onClick={login} className="w-20 h-8 bg-[#85ffa5] rounded-md mt-8">Submit</button>
+        </div>
         </div>
     </>
     );
