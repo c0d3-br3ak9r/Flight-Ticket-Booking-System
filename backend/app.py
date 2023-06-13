@@ -110,6 +110,19 @@ def logout_user():
     return get_response(resp)
 
 
+''' To verify the session id '''
+@app.route('/authenticate', methods=["POST"])
+def validate_id():
+    resp = service.validate_id(request.headers.get('id'), request.json)
+    return get_response(resp)
+
+
+''' Get all created flights '''
+@app.route('/created-flights', methods=["GET"])
+def get_created_flights():
+    resp = service.get_created_flights(request.headers.get('id'))
+    return get_response(resp)
+
 def get_response(resp):
     match resp:
         case 1: return ("Success", 200)

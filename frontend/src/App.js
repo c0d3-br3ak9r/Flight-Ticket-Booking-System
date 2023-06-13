@@ -4,6 +4,7 @@ import { Login } from './pages/User/Login';
 import { Signup } from './pages/User/Signup';
 import { AdminLogin } from './pages/Admin/AdminLogin';
 import { AdminSignup } from './pages/Admin/AdminSignup';
+import { AdminDashboard } from './pages/Admin/AdminDashboard';
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
       <Route path="/signup" element={ <Signup/> }/>
       <Route path="/admin/login" element={ <AdminLogin/> }/>
       <Route path="/admin/signup" element={ <AdminSignup/> }/>
+      <Route path="/admin/dashboard" element={ <AdminDashboard/> }/>
     </Routes>
   );
 }

@@ -56,7 +56,7 @@ class FlightDB(DB):
         query = ''' SELECT `flights`.`flight_no`, `airline`, `source`, `destination`, `date`, `time`
                     FROM `flights` INNER JOIN `flight_timings`
                     ON `flights`.`flight_no` = `flight_timings`.`flight_no` 
-                    WHERE DATE(`date`) = DATE(?)'''
+                    WHERE DATE(`date`) = DATE(?) ORDER BY `date`, `time`'''
         if ( self._exec(query, [date]) ):
             return self.cursor.fetchall()
         return -1
@@ -104,6 +104,13 @@ class FlightDB(DB):
             return self.cursor.fetchone()
         return -1
 
+
+    ''' Get all created flights '''
+    def get_created_flights(self):
+        query = ''' SELECT DISTINCT `flight_no` FROM `flights`'''
+        if ( self._exec(query) ):
+            return self.cursor.fetchall()
+        return -1
 
     ''' Creates a new flight '''
     def create_flight(self, flight_no, airline, source, destination):

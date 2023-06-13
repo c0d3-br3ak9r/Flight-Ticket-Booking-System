@@ -194,3 +194,22 @@ def logout_admin(session_id):
     if ( session_id and admin.validate_session(session_id) ):
         return admin.logout_admin(session_id)
     return 4
+
+
+''' To verify the session id '''
+def validate_id(session_id, payload):
+    usr = payload.get("user")
+    if ( usr == 'user' ):
+        if user.validate_session(session_id):
+            return 1
+    if ( usr == 'admin' ):
+        if admin.validate_session(session_id):
+            return 1
+    return 4
+
+
+''' Get all created flights '''
+def get_created_flights(session_id):
+    if ( admin.validate_session(session_id) ):
+        return flight.get_created_flights()
+    return 4

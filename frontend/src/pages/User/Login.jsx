@@ -22,7 +22,9 @@ export const Login = () => {
         }).then((res) => {
             if ( res.status === 200 ) {
                 res.json().then((data) => {
-                    document.cookie = "id="+ data["session_id"]; //+";secure;HttpOnly";
+                    const d = new Date();
+                    d.setDate(d.getDate()+1)
+                    document.cookie = "id=" + data["session_id"] + ";expires=" + d.toUTCString(); //+";secure;HttpOnly";
                 })
             } else if ( res.status === 400 ) {
                 setInfo("Invalid username or password");

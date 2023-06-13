@@ -17,6 +17,14 @@ def create_flight_timing(flight_no, date, timing):
     return 3
 
 
+''' Get created flights '''
+def get_created_flights():
+    db = FlightDB()
+    res = db.get_created_flights()
+    if ( res != -1 ):
+        return {"count" : len(res), "flights": [ x[0] for x in res ] }
+    return 3
+
 ''' Delete a flight '''
 def remove_flight(flight_no):
     db = FlightDB()

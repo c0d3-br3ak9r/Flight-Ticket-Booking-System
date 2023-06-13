@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { validateCookie } from '../../helpers/validation';
+import { useEffect } from 'react';
 
 export const AdminSignup = () => {
     const usernameRef = useRef();
@@ -17,26 +19,44 @@ export const AdminSignup = () => {
             username, password
         }
 
-        if ( password === cPassword ) {
-            fetch("/signup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            }).then((res) => {
-                if ( res.status === 200 ) {
-                    window.open('/admin/signup', "_self");
-                } else if ( res.status === 400 ) {
-                    setInfo("Invalid username or password");
-                } else if ( res.status === 500 ) {
-                    setInfo("Contact admin");
-                } else if ( res.status === 403 ) {
-                    window.open('/login', "_self");
-                }
-            });
+        if ( password !== cPassword ) {
+            setInfo("Password and Confirm Passwords does not match!")
+            return 
+        }
+
+        fetch("/admin/signup", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        }).then((res) => {
+            if ( res.status === 200 ) {
+                window.open('/admin/login', "_self");
+            } else if ( res.status === 400 ) {
+                setInfo("Invalid username or password");
+            } else if ( res.status === 500 ) {
+                setInfo("Contact admin");
+            } else if ( res.status === 403 ) {
+                window.open('/login', "_self");
+            }
+        });
+    };
+
+    const enterEvent = (e) => {
+        if ( e.key === "Enter" ) {
+            signup();
         }
     };
+
+    useEffect(() => {
+        if ( validateCookie(document.cookie, "admin") ) {
+            window.open("/admin/dashboard", "_self");
+        }
+        usernameRef.current.addEventListener("keyup", (e) => enterEvent(e));
+        passwordRef.current.addEventListener("keyup", (e) => enterEvent(e));
+        cPasswordRef.current.addEventListener("keyup", (e) => enterEvent(e));
+    }, [])
 
     return (
     <>
@@ -59,9 +79,9 @@ export const AdminSignup = () => {
             <p className="text-xl mt-8">Confirm Password</p>
             <input ref={cPasswordRef} type="password" placeholder="Confirm your password..." className="p-4 mt-4 w-full h-10 border-1 rounded-20 focus:outline-none focus:ring focus:border-green-500" />
 
-            <div className="flex justify-center">
-                <p className="text-red-500">{info}</p>
-                <button onClick={signup} className="text-xl w-24 h-10 bg-[#85ffff] hover:bg-[#85ffa5] rounded-md mt-8">Submit</button>
+            <div className="flex justify-center items-center flex-col">
+                <p className="text-red-500 mt-4 text-center">{info}</p>
+                <button onClick={signup} className="text-xl w-24 h-10 bg-[#85ffff] hover:bg-[#85ffa5] rounded-md mt-4">Submit</button>
             </div>
         </div>
         </div>
