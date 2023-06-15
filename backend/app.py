@@ -85,7 +85,14 @@ def login_user():
 ''' To get available flights based on date and time '''
 @app.route('/flight', methods=["GET"])
 def get_flights():
-    resp = service.get_flights(request.headers.get('id'), request.json)
+    resp = service.get_flights(request.headers.get('id'), request.args)
+    return get_response(resp)
+
+
+''' To get flight details of a particular flight '''
+@app.route('/flight-details', methods=["POST"])
+def get_flight_details():
+    resp = service.get_flight_details(request.headers.get('id'), request.json)
     return get_response(resp)
 
 

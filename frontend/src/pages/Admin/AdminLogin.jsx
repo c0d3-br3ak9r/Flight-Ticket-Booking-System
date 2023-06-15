@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { validateCookie } from '../../helpers/validation';
 
 export const AdminLogin = () => {
     const usernameRef = useRef();
@@ -25,7 +26,7 @@ export const AdminLogin = () => {
                 res.json().then((data) => {
                     const d = new Date();
                     d.setDate(d.getDate()+1)
-                    document.cookie = "id=" + data["session_id"] + ";expires=" + d.toUTCString(); //+";secure;HttpOnly";
+                    document.cookie = "id=" + data["session_id"] + ";expires=" + d.toUTCString() + ";secure;" //HttpOnly";
                     window.open('/admin/dashboard', "_self");
                 })
             } else if ( res.status === 400 ) {
@@ -46,8 +47,13 @@ export const AdminLogin = () => {
     };
 
     useEffect(() => {
-        usernameRef.current.addEventListener("keyup", (e) => enterEvent(e));
-        passwordRef.current.addEventListener("keyup", (e) => enterEvent(e));
+        (async () => {
+            if ( await validateCookie(document.cookie, "admin") ) {
+                window.open("/admin/dashboard", "_self");
+           }
+            usernameRef.current.addEventListener("keyup", (e) => enterEvent(e));
+            passwordRef.current.addEventListener("keyup", (e) => enterEvent(e));
+        })();
     }, []);
 
     return (
@@ -57,10 +63,10 @@ export const AdminLogin = () => {
             <p className="text-3xl text-center font-bold mt-8">Admin Login</p>
 
             <p className="text-xl mt-8">Username</p>
-            <input ref={usernameRef} type="text" placeholder="Username goes here..." className="p-4 mt-4 w-full h-10 border-1 rounded-20 focus:outline-none focus:ring focus:border-green-500" />
+            <input ref={usernameRef} type="text" placeholder="Username goes here..." className="p-4 mt-4 w-full h-10 border-1 rounded-lg focus:outline-none focus:ring focus:border-green-500" />
 
             <p className="text-xl mt-8">Password</p>
-            <input ref={passwordRef} type="password" placeholder="Password goes here..." className="p-4 mt-4 w-full h-10 border-1 rounded-20 focus:outline-none focus:ring focus:border-green-500" />
+            <input ref={passwordRef} type="password" placeholder="Password goes here..." className="p-4 mt-4 w-full h-10 border-1 rounded-lg focus:outline-none focus:ring focus:border-green-500" />
 
             <div className="flex justify-center items-center flex-col">
                 <p className="text-red-500 mt-4 text-center">{info}</p>

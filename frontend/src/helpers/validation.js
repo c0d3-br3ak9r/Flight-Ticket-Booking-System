@@ -1,11 +1,7 @@
 export const getCookie = (cookie) => {
-    if ( cookie ) {
-        cookie = cookie.split(";")[0];
-        console.log(cookie);
-        console.log(typeof cookie);
-        if ( cookie.indexOf("=") ) {
-            return cookie.split("=")[1];
-        }
+    console.log(cookie);
+    if ( cookie.indexOf("=")  !== -1 ) {
+        return cookie.split("=")[1];
     }
     return "";
 }
@@ -13,7 +9,8 @@ export const getCookie = (cookie) => {
 export const validateCookie = async (cki, usr) => {
     let url = "/authenticate";
     const cookie = getCookie(cki);
-    if ( cookie === "" ) return false;
+    console.log(cookie);
+    if ( !cookie ) return false;
     let isSuccess;
     await fetch(url, {
         method: "POST",
@@ -33,3 +30,4 @@ export const validateCookie = async (cki, usr) => {
     });
     return isSuccess;
 }
+

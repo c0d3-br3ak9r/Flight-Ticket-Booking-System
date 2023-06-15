@@ -24,6 +24,16 @@ class DB:
         except sqlite3.Error as e:
             print(e)
             return 0
+        
+    ''' Executes mulitple SQL query '''
+    def _execmany(self, query, params=[]):
+        try:
+            self.cursor.executemany(query, params)
+            self.conn.commit()
+            return 1
+        except sqlite3.Error as e:
+            print(e)
+            return 0
 
 
     def __del__(self):

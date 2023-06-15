@@ -10,6 +10,7 @@ class UserDB(DB):
                             )
                             '''
 
+
     create_user_session_table = '''
                                 CREATE TABLE IF NOT EXISTS `user_session` (
                                     `id` INTEGER NOT NULL PRIMARY KEY DEFAULT AUTO_INCREMENT,

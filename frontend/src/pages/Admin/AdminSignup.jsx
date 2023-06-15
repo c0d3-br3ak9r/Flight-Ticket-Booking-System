@@ -38,7 +38,7 @@ export const AdminSignup = () => {
             } else if ( res.status === 500 ) {
                 setInfo("Contact admin");
             } else if ( res.status === 403 ) {
-                window.open('/login', "_self");
+                window.open('/signup', "_self");
             }
         });
     };
@@ -50,12 +50,14 @@ export const AdminSignup = () => {
     };
 
     useEffect(() => {
-        if ( validateCookie(document.cookie, "admin") ) {
-            window.open("/admin/dashboard", "_self");
-        }
-        usernameRef.current.addEventListener("keyup", (e) => enterEvent(e));
-        passwordRef.current.addEventListener("keyup", (e) => enterEvent(e));
-        cPasswordRef.current.addEventListener("keyup", (e) => enterEvent(e));
+        (async () => {
+            if ( await validateCookie(document.cookie, "admin") ) {
+                window.open("/admin/dashboard", "_self");
+           }
+            usernameRef.current.addEventListener("keyup", (e) => enterEvent(e));
+            passwordRef.current.addEventListener("keyup", (e) => enterEvent(e));
+            cPasswordRef.current.addEventListener("keyup", (e) => enterEvent(e));
+        })();
     }, [])
 
     return (
@@ -68,16 +70,16 @@ export const AdminSignup = () => {
                 <p className="text-xl mt-8">Username</p>
                 <FontAwesomeIcon className="ml-2 mt-9" icon={faInfoCircle} title="Username must consist of only alphabets, digits and underscore with length between 4 and 20"/>
             </div>            
-            <input ref={usernameRef} type="text" placeholder="Username goes here..." className="p-4 mt-4 w-full h-10 border-1 rounded-20 focus:outline-none focus:ring focus:border-green-500" />
+            <input ref={usernameRef} type="text" placeholder="Username goes here..." className="p-4 mt-4 w-full h-10 border-1 rounded-lg focus:outline-none focus:ring focus:border-green-500" />
 
             <div className="flex flex-row items-center">
                 <p className="text-xl mt-8">Password</p>
                 <FontAwesomeIcon className="ml-2 mt-9" icon={faInfoCircle} title="Password must contain of atleast one lowercase alphabet, one uppercase alphabet, one digit and one special character with length between 8 and 20"/>
             </div>
-            <input ref={passwordRef} type="password" placeholder="Password goes here..." className="p-4 mt-4 w-full h-10 border-1 rounded-20 focus:outline-none focus:ring focus:border-green-500" />
+            <input ref={passwordRef} type="password" placeholder="Password goes here..." className="p-4 mt-4 w-full h-10 border-1 rounded-lg focus:outline-none focus:ring focus:border-green-500" />
 
             <p className="text-xl mt-8">Confirm Password</p>
-            <input ref={cPasswordRef} type="password" placeholder="Confirm your password..." className="p-4 mt-4 w-full h-10 border-1 rounded-20 focus:outline-none focus:ring focus:border-green-500" />
+            <input ref={cPasswordRef} type="password" placeholder="Confirm your password..." className="p-4 mt-4 w-full h-10 border-1 rounded-lg focus:outline-none focus:ring focus:border-green-500" />
 
             <div className="flex justify-center items-center flex-col">
                 <p className="text-red-500 mt-4 text-center">{info}</p>

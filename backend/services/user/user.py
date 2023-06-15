@@ -52,7 +52,7 @@ def validate_session(session_id):
 ''' Get available flights data based on date and time '''
 def get_flights_data(flight_no, date, time):
     fields = ["flight_no", "airline", "source", "destination",
-              "date", "time"]
+              "date", "time", "flight_timing_id"]
     db = FlightDB()
     if ( flight_no and date and time ):
         res = db.get_flights_from_flight_date_time(flight_no, date, time)
