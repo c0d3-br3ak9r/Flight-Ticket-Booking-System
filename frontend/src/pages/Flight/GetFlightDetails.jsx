@@ -1,12 +1,12 @@
 import { GetSeatMapping } from "./GetSeatMapping";
 import { useLocation } from "react-router-dom";
 import { getCookie, validateCookie } from "../../helpers/validation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const GetFlightDetails = () => {
     const location = useLocation();
 
-    let flightDetails;
+    let [flightDetails, setFlightDetails] = useState({});
 
     const getDetails = async () => {
         let cookie = getCookie(document.cookie);
@@ -23,7 +23,7 @@ export const GetFlightDetails = () => {
             if ( res.status === 200 ) {
                 res.json().then((data) => {
                     console.log(data);
-                    flightDetails = data;
+                    setFlightDetails(data);
                 })
             }
         });
@@ -45,8 +45,9 @@ export const GetFlightDetails = () => {
     return (
     <>
     <div>
-        <p>{location.state.flight_timing_id  }</p>
-        <GetSeatMapping/>
+        <p>{flightDetails.flight_no  }</p>
+        <GetSeatMapping bookedSeats={flightDetails.booked_seats} firstClassCount={flightDetails.first_class_seat}
+        businessClassCount={flightDetails.business_class_seat} economyClassCount={flightDetails.economy_class_seat}/>
     </div>
     </>
     );

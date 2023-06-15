@@ -35,8 +35,8 @@ export const GetFlights = () => {
     <>
     <div className="flex flex-col bg-white border-2 rounded-md p-10 m-10">
         <p className="text-2xl text-bold text-center mb-4">Get Flights</p>
-        {flights.map((flight) => 
-        <DisplayFlight flight_no={flight.flight_no} airline={flight.airline} flight_timing_id={flight.flight_timing_id}
+        {flights.map((flight, idx) => 
+        <DisplayFlight key={idx} flight_no={flight.flight_no} airline={flight.airline} flight_timing_id={flight.flight_timing_id}
             source={flight.source} destination={flight.destination} date={flight.date} time={flight.time}/>)}
     </div>
     </>
